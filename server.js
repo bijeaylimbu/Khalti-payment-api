@@ -37,5 +37,31 @@ app.post("/khalti-api", async (req, res) => {
   }
 });
 
+app.post("/epayment/lookup", async (req, res) => {
+  try {
+    const payload = req.body;
+    const khaltiResponse = await axios.post(
+      "https://a.khalti.com/api/v2/epayment/lookup/",
+      payload,
+      {
+        headers: {
+          Authorization: `key ${process.env.KHALTI_SECRET_KEY}`,
+        },
+      }
+    );
+
+    res.json({
+      success: true,
+      data: khaltiResponse.data,
+    });
+  } catch (error) {
+    console.error("Error calling Khalti API:", error.message);
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+});
+
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
